@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>90-Day HR Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --ink2: #4a4a6a;
+    --ink3: #8888aa;
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --accent: #2d5be3;
+    --accent2: #e8430a;
+    --accent3: #0a9e6e;
+    --phase1: #2d5be3;
+    --phase2: #7c3aed;
+    --phase3: #0a9e6e;
+    --border: rgba(26,26,46,0.1);
+    --tag-bg: rgba(45,91,227,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); font-size: 15px; line-height: 1.6; }
+  h1, h2, h3 { font-family: 'DM Serif Display', serif; font-weight: 400; }
+
+  .page { max-width: 860px; margin: 0 auto; padding: 48px 32px 80px; }
+
+  .hero { margin-bottom: 48px; }
+  .hero-label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin-bottom: 10px; }
+  .hero h1 { font-size: 42px; line-height: 1.1; color: var(--ink); margin-bottom: 8px; }
+  .hero-sub { font-size: 15px; color: var(--ink2); max-width: 520px; }
+  .hero-meta { display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+  .meta-pill { font-size: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; color: var(--ink2); }
+
+  .nav { display: flex; gap: 8px; margin-bottom: 36px; flex-wrap: wrap; }
+  .nav-btn { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 7px 18px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); color: var(--ink2); cursor: pointer; transition: all .15s; }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .section { display: none; }
+  .section.visible { display: block; }
+
+  .phase-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 6px; }
+  .phase-num { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 500; }
+  .phase-header h2 { font-size: 28px; }
+  .phase-desc { font-size: 14px; color: var(--ink2); margin-bottom: 24px; max-width: 600px; }
+
+  .weeks { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
+  .week { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .week-header { display: flex; align-items: center; gap: 14px; padding: 14px 18px; cursor: pointer; user-select: none; }
+  .week-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .week-title { font-weight: 500; font-size: 14px; flex: 1; }
+  .week-badge { font-size: 11px; padding: 3px 10px; border-radius: 10px; font-weight: 500; }
+  .week-chevron { font-size: 12px; color: var(--ink3); transition: transform .2s; }
+  .week-chevron.open { transform: rotate(180deg); }
+  .week-body { display: none; border-top: 1px solid var(--border); padding: 16px 18px; }
+  .week-body.open { display: block; }
+
+  .tasks { list-style: none; }
+  .task { display: flex; gap: 10px; padding: 6px 0; font-size: 14px; align-items: flex-start; }
+  .task-icon { font-size: 15px; margin-top: 1px; flex-shrink: 0; width: 18px; text-align: center; }
+  .task-text { color: var(--ink); line-height: 1.5; }
+  .task-tag { display: inline-block; font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; padding: 2px 7px; border-radius: 6px; margin-left: 6px; vertical-align: middle; }
+  .tag-sp { background: #e8f0fe; color: #1a56c4; }
+  .tag-rel { background: #fef3e2; color: #b45309; }
+  .tag-sys { background: #f0fdf4; color: #166534; }
+  .tag-str { background: #fdf4ff; color: #7e22ce; }
+
+  .milestone { display: flex; align-items: center; gap: 12px; background: var(--bg); border-radius: 8px; padding: 10px 14px; margin-top: 12px; font-size: 13px; }
+  .milestone-icon { font-size: 18px; }
+  .milestone-text { color: var(--ink2); }
+  .milestone-text strong { color: var(--ink); }
+
+  .focus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 32px; }
+  .focus-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+  .focus-card-label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin-bottom: 6px; font-weight: 500; }
+  .focus-card-title { font-size: 16px; font-family: 'DM Serif Display', serif; margin-bottom: 6px; }
+  .focus-card-desc { font-size: 13px; color: var(--ink2); line-height: 1.5; }
+
+  .wins-section { }
+  .wins-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: gap; gap: 12px; }
+  .wins-header h2 { font-size: 28px; }
+  .add-win-btn { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 9px 20px; background: var(--ink); color: #fff; border: none; border-radius: 8px; cursor: pointer; transition: opacity .15s; }
+  .add-win-btn:hover { opacity: .85; }
+
+  .win-form { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; display: none; }
+  .win-form.open { display: block; }
+  .win-form label { display: block; font-size: 12px; font-weight: 500; color: var(--ink2); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .06em; }
+  .win-form input, .win-form textarea, .win-form select {
+    width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 9px 12px;
+    border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--ink);
+    margin-bottom: 14px; resize: vertical;
+  }
+  .win-form textarea { min-height: 70px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .win-form-actions { display: flex; gap: 10px; }
+  .btn-save { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 8px 20px; background: var(--accent); color: #fff; border: none; border-radius: 8px; cursor: pointer; }
+  .btn-cancel { font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 8px 16px; background: transparent; color: var(--ink2); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; }
+
+  .wins-list { display: flex; flex-direction: column; gap: 12px; }
+  .win-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; position: relative; }
+  .win-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+  .win-card-title { font-weight: 500; font-size: 15px; }
+  .win-card-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .win-date { font-size: 12px; color: var(--ink3); }
+  .win-cat { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 8px; }
+  .cat-sharepoint { background: #e8f0fe; color: #1a56c4; }
+  .cat-relationship { background: #fef3e2; color: #b45309; }
+  .cat-systems { background: #f0fdf4; color: #166534; }
+  .cat-strategy { background: #fdf4ff; color: #7e22ce; }
+  .cat-other { background: #f1f1f1; color: #555; }
+  .win-desc { font-size: 13px; color: var(--ink2); line-height: 1.5; }
+  .win-impact { font-size: 12px; color: var(--accent3); font-weight: 500; margin-top: 6px; }
+  .win-delete { position: absolute; top: 14px; right: 14px; font-size: 13px; color: var(--ink3); background: none; border: none; cursor: pointer; opacity: 0; transition: opacity .15s; }
+  .win-card:hover .win-delete { opacity: 1; }
+
+  .empty-state { text-align: center; padding: 48px 20px; color: var(--ink3); }
+  .empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  .promo-section { }
+  .promo-intro { font-size: 14px; color: var(--ink2); margin-bottom: 24px; max-width: 600px; }
+  .promo-cards { display: flex; flex-direction: column; gap: 14px; }
+  .promo-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; gap: 16px; }
+  .promo-num { font-family: 'DM Serif Display', serif; font-size: 32px; color: var(--border); flex-shrink: 0; width: 32px; line-height: 1; }
+  .promo-card-title { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+  .promo-card-desc { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+
+  @media (max-width: 600px) {
+    .focus-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 30px; }
+    .page { padding: 28px 18px 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <p class="hero-label">Your roadmap</p>
+    <h1>90-Day HR Plan</h1>
+    <p class="hero-sub">HR Generalist · Norwegian branch · Starting 1 July 2025</p>
+    <div class="hero-meta">
+      <span class="meta-pill">200 employees</span>
+      <span class="meta-pill">Team of 3</span>
+      <span class="meta-pill">SharePoint lead</span>
+      <span class="meta-pill">Superuser: Quinyx · TeamTailor · O365</span>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSection('phase1', this)">Phase 1 — Learn</button>
+    <button class="nav-btn" onclick="showSection('phase2', this)">Phase 2 — Build</button>
+    <button class="nav-btn" onclick="showSection('phase3', this)">Phase 3 — Lead</button>
+    <button class="nav-btn" onclick="showSection('wins', this)">Wins log</button>
+    <button class="nav-btn" onclick="showSection('promo', this)">Promotion playbook</button>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="section visible" id="phase1">
+    <div class="phase-header">
+      <span class="phase-num" style="color:var(--phase1)">Days 1–30</span>
+      <h2>Listen, map, and earn trust</h2>
+    </div>
+    <p class="phase-desc">Your job this month isn't to fix anything — it's to understand everything. Ask more questions than you answer. Be visibly curious and reliably fast on small tasks.</p>
+
+    <div class="focus-grid">
+      <div class="focus-card">
+        <div class="focus-card-label">Primary project</div>
+        <div class="focus-card-title">SharePoint scoping</div>
+        <div class="focus-card-desc">Audit existing intranet content, interview 8–10 key employees across departments. Map what's needed before building anything.</div>
+      </div>
+      <div class="focus-card">
+        <div class="focus-card-label">Relationship goal</div>
+        <div class="focus-card-title">Know 40+ employees by name</div>
+        <div class="focus-card-desc">Walk the floor. Join lunch. Attend every all-hands. People adopt tools built by someone they trust.</div>
+      </div>
+    </div>
+
+    <div class="weeks">
+      <div class="week">
+        <div class="week-header" onclick="toggleWeek(this)">
+          <div class="week-dot" style="background:var(--phase1)"></div>
+          <div class="week-title">Week 1 — Orientation & observation</div>
+          <span class="week-badge" style="background:#e8f0fe;color:#1a56c4">Foundation</span>
+          <span class="week-chevron">▼</span>
+        </div>
+        <div class="week-body">
+          <ul class="tasks">
+            <li class="task"><span class="task-icon">🤝</span><span class="task-text">Schedule 1-on-1s with HR Business Partner and HR Director in week 1 — ask them: "What would success look like at 90 days?" <span class="task-tag tag-rel">relationship</span></span></li>
+            <li class="task"><span class="task-icon">📋</span><span class="task-text">Request access and get logged in to all systems: Quinyx, TeamTailor, SharePoint admin, O365. Document any access issues immediately. <span class="task-tag tag-sys">systems</span></span></li>
+            <li class="task"><span class="task-icon">🗺️</span><span class="task-text">Ask for org chart, current HR processes, and any existing documentation. Note what exists vs. what's missing. <span class="task-tag tag-str">strategy</span></span></li>
+            <li class="task"><span class="task-icon">👂</span><span class="task-text">Shadow your colleagues on 2–3 different task types. Take notes, ask "why is it done this way?" — not to criticise, but to understand. <span class="task-tag tag-rel">relationship</span></span></li>
+            <li class="task"><span class="task-icon">📝</span><span class="task-text">Start a daily log: 3 things you learned, 1 question to follow up, 1 win (however small). 5 minutes at end of day. <span class="task-tag tag-str">strategy</span></span></li>
+          </ul>
+          <div class="milestone"><span class="milestone-icon">🏁</span><span class="milestone-text"><strong>Week 1 milestone:</strong> All system access confirmed. First 1-on-1s done. Know your team's top 3 priorities.</span></div>
+        </div>
+      </div>
+
+      <div class="week">
+        <div class="week-header" onclick="toggleWeek(this)">
+          <div class="week-dot" style="background:var(--phase1)"></div>
+          <div class="week-title">Week 2 — Stakeholder interviews & SharePoint audit</div>
+          <span class="week-badge" style="background:#e8f0fe;color:#1a56c4">Discovery</span>
+          <span class="week-chevron">▼</span>
+        </div>
+        <div class="week-body">
+          <ul class="tasks">
+            <li class="task"><span class="task-icon">🔍</span><span class="task-text">Audit what currently lives in the intranet / SharePoint draft: what content exists, what's outdated, what's missing. <span class="task-tag tag-sp">sharepoint</span></span></li>
+            <li class="task"><span class="task-icon">🎤</span><span class="task-text">Conduct 6–8 short interviews (15 min each) with employees across departments: "Where do you go to find HR info today? What frustrates you?" <span class="task-tag tag-sp">sharepoint</span></span></li>
+            <li class="task"><span class="task-icon">📐</span><span class="task-text">Learn Quinyx and TeamTailor from the inside — run a test cycle in both. Note any workflow gaps you spot. <span class="task-tag tag-sys">systems</span></span></li>
+            <li class="task"><span class="task-icon">☕</span><span class="task-text">Introduce yourself to managers in each department — a short Teams message or coffee works. You'll need their buy-in for SharePoint adoption. <span class="task-tag tag-rel">relationship</span></span></li>
+          </ul>
+          <div class="milestone"><span class="milestone-icon">🏁</span><span class="milestone-text"><strong>Week 2 milestone:</strong> Stakeholder interviews done. Draft list of SharePoint content requirements written up.</span></div>
+        </div>
+      </div>
+
+      <div class="week">
+        <div class="week-header" onclick="toggleWeek(this)">
+          <div class="week-dot" style="background:var(--phase1)"></div>
+          <div class="week-title">Weeks 3–4 — SharePoint architecture plan & quick wins</div>
+          <span class="week-badge" style="background:#e8f0fe;color:#1a56c4">Planning</span>
+          <span class="week-chevron">▼</span>
+        </div>
+        <div class="week-body">
+          <ul class="tasks">
+            <li class="task"><span class="task-icon">🏗️</span><span class="task-text">Draft a SharePoint sitemap and information architecture — show it to your HR Director before building anything. Get alignment early. <span class="task-tag tag-sp">sharepoint</span></span></li>
+            <li class="task"><span class="task-icon">⚡</span><span class="task-text">Identify 1–2 "quick win" SharePoint pages you can publish in week 4 (e.g. a clean HR contacts page, or a leave policy summary). <span class="task-tag tag-sp">sharepoint</span></span></li>
+            <li class="task"><span class="task-icon">📊</span><span class="task-text">Present a short summary to the team: "Here's what I've found, here's my proposed plan." This signals strategic thinking — rare at junior level. <span class="task-tag tag-str">strategy</span></span></li>
+            <li class="task"><span class="task-icon">🔧</span><span class="task-text">Resolve any Quinyx or TeamTailor issues you've spotted. Fix small things fast — it builds your reputation as reliable. <span class="task-tag tag-sys">systems</span></span></li>
+            <li class="task"><span class="task-icon">🤝</span><span class="task-text">Find your informal allies: who are the "go-to" people employees trust in each department? Win them over — they'll champion the intranet. <span class="task-tag tag-rel">relationship</span></span></li>
+          </ul>
+          <div class="milestone"><span class="milestone-icon">🏁</span><span class="milestone-text"><strong>Day 30 milestone:</strong> SharePoint architecture approved. First pages live. Known by name across the office. Presented your plan to the team.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="section" id="phase2">
+    <div class="phase-header">
+      <span class="phase-num" style="color:var(--phase2)">Days 31–60</span>
+      <h2>Build, train, and show impact</h2>
+    </div>
+    <p class="phase-desc">Now you build. SharePoint goes live in phases. You run training. You make sure people actually use it — adoption is the real deliverable, not the site itself.</p>
+
+    <div class="focus-grid">
+      <div class="focus-card">
+        <div class="focus-card-label">Primary project</div>
+        <div class="focus-card-title">SharePoint launch — phase 1</div>
+        <div class="focus-card-desc">Core pages live, all HR policies accessible, navigation tested with real users. Send comms, run walk-through sessions.</div>
+      </div>
+      <div class="focus-card">
+        <div class="focus-card-label">Visibility goal</div>
+        <div class="focus-card-title">Be the go-to person</div>
+        <div class="focus-card-desc">When anyone has a system question — Quinyx, TeamTailor, SharePoint — they think of you first. That's your brand.</div>
+      </div>
+    </div>
+
+    <div class="weeks">
+      <div class="week">
+        <div class="week-header" onclick="toggleWeek(this)">
+          <div class="week-dot" style="background:var(--phase2)"></div>
+          <div class="week-title">Weeks 5–6 — Build core SharePoint site</div>
+          <span class="week-badge" style="background:#fdf4ff;color:#7e22ce">Building</span>
+          <span class="week-chevron">▼</span>
+        </div>
+        <div class="week-body">
+          <ul class="tasks">
+            <li class="task"><span class="task-icon">🖥️</span><span class="task-text">Build out the approved SharePoint architecture: HR policies, onboarding info, org chart, key contacts, FAQ. Keep design clean and consistent. <span class="task-tag tag-sp">sharepoint</span></span></li>
+            <li class="task"><span class="task-icon">✅</span><span class="task-text">Run a content review with HR Director before publishing — you want sign-off, not surprises. <span class="task-tag tag-str">strategy</span></span></li>
+            <li class="task"><span class="task-icon">🧪</span><span class="task-text">User test with 3–4 employees before broad launch: "Can you find the parental leave policy? How long did it take?" Fix friction points. <span class="task-tag tag-sp">sharepoint</span></span></li>
+            <li class="task"><span class="task-icon">📣</span><span class="task-text">Draft launch communication — a short, clear all-staff message. Ask the HR Director to send it (their name increases open rates). <span class="task-tag tag-rel">relationship</span></span></li>
+          </ul>
+          <div class="milestone"><span class="milestone-icon">🏁</span><span class="milestone-text"><strong>Week 6 milestone:</strong> Phase 1 of SharePoint ready to launch. Launch comms drafted and approved.</span></div>
+        </div>
+      </div>
+
+      <div class="week">
+        <div class="week-header" onclick="toggleWeek(this)">
+          <div class="week-dot" style="background:var(--phase2)"></div>
+          <div class="week-title">Weeks 7–8 — Launch, train, and measure</div>
+          <span class="week-badge" style="background:#fdf4ff;color:#7e22ce">Launch</span>
+          <span class="week-chevron">▼</span>
+        </div>
+        <div class="week-body">
+          <ul class="tasks">
+            <li class="task"><span class="task-icon">🚀</span><span class="task-text">Launch SharePoint phase 1. Announce in all-hands or via all-staff email. Pin it to Teams as a tab. <span class="task-tag tag-sp">sharepoint</span></span></li>
+            <li class="task"><span class="task-icon">🎓</span><span class="task-text">Run 2–3 short training sessions (20–30 min each) for different employee groups. Record one for async access. <span class="task-tag tag-sp">sharepoint</span></span></li>
+            <li class="task"><span class="task-icon">📈</span><span class="task-text">Set up SharePoint analytics — track page views, most visited pages, search terms. This becomes your adoption evidence. <span class="task-tag tag-sp">sharepoint</span></span></li>
+            <li class="task"><span class="task-icon">🔄</span><span class="task-text">Run a Quinyx audit — are schedules being used correctly? Are there recurring errors? Document and fix. <span class="task-tag tag-sys">systems</span></span></li>
+            <li class="task"><span class="task-icon">💬</span><span class="task-text">Collect feedback via a short 3-question form after training sessions. Use it to improve the site, and reference it as evidence of listening. <span class="task-tag tag-rel">relationship</span></span></li>
+          </ul>
+          <div class="milestone"><span class="milestone-icon">🏁</span><span class="milestone-text"><strong>Day 60 milestone:</strong> SharePoint live and employees trained. Adoption metrics tracked. Feedback collected and acting on it.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="section" id="phase3">
+    <div class="phase-header">
+      <span class="phase-num" style="color:var(--phase3)">Days 61–90</span>
+      <h2>Lead, optimise, and position yourself</h2>
+    </div>
+    <p class="phase-desc">This phase is about proving you think strategically, not just operationally. Improve what you've built, own problems proactively, and make sure your impact is visible — not in a self-promotional way, but through results that speak.</p>
+
+    <div class="focus-grid">
+      <div class="focus-card">
+        <div class="focus-card-label">Primary goal</div>
+        <div class="focus-card-title">Measurable adoption</div>
+        <div class="focus-card-desc">Can you show that X% of employees visit SharePoint weekly? That Y questions that used to go to HR are now self-served? That's a promotion conversation.</div>
+      </div>
+      <div class="focus-card">
+        <div class="focus-card-label">Career goal</div>
+        <div class="focus-card-title">Request a review meeting</div>
+        <div class="focus-card-desc">At day 85–90, ask your HR Director for a structured feedback conversation. Come prepared with your wins and next goals.</div>
+      </div>
+    </div>
+
+    <div class="weeks">
+      <div class="week">
+        <div class="week-header" onclick="toggleWeek(this)">
+          <div class="week-dot" style="background:var(--phase3)"></div>
+          <div class="week-title">Weeks 9–10 — Optimise & phase 2 planning</div>
+          <span class="week-badge" style="background:#f0fdf4;color:#166534">Optimise</span>
+          <span class="week-chevron">▼</span>
+        </div>
+        <div class="week-body">
+          <ul class="tasks">
+            <li class="task"><span class="task-icon">📊</span><span class="task-text">Review SharePoint analytics: which pages are visited most? Where do people drop off? Improve the top 3 pain points. <span class="task-tag tag-sp">sharepoint</span></span></li>
+            <li class="task"><span class="task-icon">🗓️</span><span class="task-text">Plan SharePoint phase 2 — what content comes next? (Onboarding portal, manager resources, benefits hub?) Present the roadmap to your team. <span class="task-tag tag-str">strategy</span></span></li>
+            <li class="task"><span class="task-icon">🔗</span><span class="task-text">Integrate Quinyx and TeamTailor links / guides into SharePoint. One place for everything HR-related. <span class="task-tag tag-sys">systems</span></span></li>
+            <li class="task"><span class="task-icon">🏆</span><span class="task-text">Identify the department with highest SharePoint engagement — recognise their manager (a small shoutout goes a long way). <span class="task-tag tag-rel">relationship</span></span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="week">
+        <div class="week-header" onclick="toggleWeek(this)">
+          <div class="week-dot" style="background:var(--phase3)"></div>
+          <div class="week-title">Weeks 11–13 — Impact report & 90-day review</div>
+          <span class="week-badge" style="background:#f0fdf4;color:#166534">Review</span>
+          <span class="week-chevron">▼</span>
+        </div>
+        <div class="week-body">
+          <ul class="tasks">
+            <li class="task"><span class="task-icon">📑</span><span class="task-text">Write a 1-page "90-day impact summary" for yourself and your manager: what you delivered, adoption numbers, feedback themes, what's next. <span class="task-tag tag-str">strategy</span></span></li>
+            <li class="task"><span class="task-icon">🎯</span><span class="task-text">In your review meeting, ask directly: "What would I need to demonstrate over the next 6 months to be considered for more responsibility / a title review?" <span class="task-tag tag-str">strategy</span></span></li>
+            <li class="task"><span class="task-icon">🌱</span><span class="task-text">Propose your own development plan — a course in HR analytics, SHRM certification, or a SharePoint Power Apps project. Show you're investing in yourself. <span class="task-tag tag-str">strategy</span></span></li>
+            <li class="task"><span class="task-icon">🤝</span><span class="task-text">Schedule informal coffee with 5 people you haven't spoken to yet. At 90 days you should have a relationship with most of the 200 employees — even brief ones. <span class="task-tag tag-rel">relationship</span></span></li>
+            <li class="task"><span class="task-icon">🔭</span><span class="task-text">Identify one HR process that's still manual or inefficient — propose a fix. Solving problems that weren't in your job description is exactly how promotions happen. <span class="task-tag tag-str">strategy</span></span></li>
+          </ul>
+          <div class="milestone"><span class="milestone-icon">🏁</span><span class="milestone-text"><strong>Day 90 milestone:</strong> 90-day review done. Impact report presented. Next 6-month goals agreed. SharePoint phase 2 roadmap signed off.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WINS LOG -->
+  <div class="section" id="wins">
+    <div class="wins-header">
+      <div>
+        <h2>Wins log</h2>
+        <p style="font-size:13px;color:var(--ink3);margin-top:4px">Your evidence file for promotion conversations</p>
+      </div>
+      <button class="add-win-btn" onclick="toggleForm()">+ Log a win</button>
+    </div>
+
+    <div class="win-form" id="winForm">
+      <div class="form-row">
+        <div>
+          <label>Win title</label>
+          <input type="text" id="winTitle" placeholder="e.g. Launched SharePoint HR hub">
+        </div>
+        <div>
+          <label>Category</label>
+          <select id="winCat">
+            <option value="sharepoint">SharePoint</option>
+            <option value="relationship">Relationship</option>
+            <option value="systems">Systems</option>
+            <option value="strategy">Strategy</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <label>What you did</label>
+      <textarea id="winDesc" placeholder="Briefly describe what happened and what you did..."></textarea>
+      <label>Impact / result</label>
+      <input type="text" id="winImpact" placeholder="e.g. 85% of employees accessed it in week 1">
+      <div class="win-form-actions">
+        <button class="btn-save" onclick="saveWin()">Save win</button>
+        <button class="btn-cancel" onclick="toggleForm()">Cancel</button>
+      </div>
+    </div>
+
+    <div class="wins-list" id="winsList"></div>
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🏆</div>
+      <p>No wins logged yet — your first one is closer than you think.</p>
+    </div>
+  </div>
+
+  <!-- PROMOTION PLAYBOOK -->
+  <div class="section" id="promo">
+    <div class="phase-header" style="margin-bottom:6px">
+      <h2>Promotion playbook</h2>
+    </div>
+    <p class="promo-intro">In a flat Norwegian HR team, promotions don't come from time served — they come from taking ownership, solving problems nobody asked you to solve, and making your impact legible to your manager.</p>
+    <div class="promo-cards">
+      <div class="promo-card">
+        <div class="promo-num">1</div>
+        <div>
+          <div class="promo-card-title">Own the SharePoint project end-to-end</div>
+          <div class="promo-card-desc">Don't just build it — track adoption metrics, run training, collect feedback, iterate. Present a quarterly usage report. This turns a task into a strategic initiative you lead, and it's measurable proof of impact at any performance review.</div>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-num">2</div>
+        <div>
+          <div class="promo-card-title">Become the system expert everyone relies on</div>
+          <div class="promo-card-desc">Being the undisputed go-to for Quinyx, TeamTailor and O365 makes you load-bearing for the team. Document your knowledge in SharePoint (guides, FAQs) — this shows you think about the org, not just your own work. Expertise that only lives in your head is less promotable than expertise that multiplies.</div>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-num">3</div>
+        <div>
+          <div class="promo-card-title">Fix one thing that wasn't your job</div>
+          <div class="promo-card-desc">By day 60, you will have spotted at least one HR process that's inefficient, manual, or broken. Pick the one you can actually fix, propose a solution, and fix it. Solving problems outside your remit is the clearest signal that you're operating above your level.</div>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-num">4</div>
+        <div>
+          <div class="promo-card-title">Make your work visible — without bragging</div>
+          <div class="promo-card-desc">Send a short monthly update to your HR Director: "Here's what shipped, here's adoption, here's what's next." In Norwegian work culture, self-promotion feels awkward — so frame it as keeping the team informed. Your wins log is your source of truth for these updates and for performance reviews.</div>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-num">5</div>
+        <div>
+          <div class="promo-card-title">Have the conversation explicitly</div>
+          <div class="promo-card-desc">At your 90-day review, ask: "What would I need to show over the next 6 months to move into a more senior role?" Norwegian managers rarely volunteer this — but they respect directness. It also anchors the conversation so you know exactly what to work toward, rather than hoping someone notices.</div>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-num">6</div>
+        <div>
+          <div class="promo-card-title">Invest in credentials that matter</div>
+          <div class="promo-card-desc">Consider a Microsoft 365 Certified: Fundamentals cert (directly relevant to your role), or an HR analytics course. It shows initiative, adds formal credibility, and gives you something concrete to bring to a salary review — "I've taken on X, completed Y, and delivered Z." That's a raise conversation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('visible');
+    btn.classList.add('active');
+  }
+
+  function toggleWeek(header) {
+    const body = header.nextElementSibling;
+    const chevron = header.querySelector('.week-chevron');
+    body.classList.toggle('open');
+    chevron.classList.toggle('open');
+  }
+
+  let wins = JSON.parse(localStorage.getItem('hr90wins') || '[]');
+
+  function renderWins() {
+    const list = document.getElementById('winsList');
+    const empty = document.getElementById('emptyState');
+    if (wins.length === 0) { list.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    list.innerHTML = wins.map((w, i) => `
+      <div class="win-card">
+        <button class="win-delete" onclick="deleteWin(${i})">✕ remove</button>
+        <div class="win-card-top">
+          <div class="win-card-title">${w.title}</div>
+          <div class="win-card-meta">
+            <span class="win-cat cat-${w.cat}">${w.cat}</span>
+            <span class="win-date">${w.date}</span>
+          </div>
+        </div>
+        ${w.desc ? `<div class="win-desc">${w.desc}</div>` : ''}
+        ${w.impact ? `<div class="win-impact">↑ ${w.impact}</div>` : ''}
+      </div>
+    `).reverse().join('');
+  }
+
+  function toggleForm() {
+    document.getElementById('winForm').classList.toggle('open');
+  }
+
+  function saveWin() {
+    const title = document.getElementById('winTitle').value.trim();
+    if (!title) return;
+    wins.push({
+      title,
+      cat: document.getElementById('winCat').value,
+      desc: document.getElementById('winDesc').value.trim(),
+      impact: document.getElementById('winImpact').value.trim(),
+      date: new Date().toLocaleDateString('nb-NO', {day:'numeric', month:'short', year:'numeric'})
+    });
+    localStorage.setItem('hr90wins', JSON.stringify(wins));
+    document.getElementById('winTitle').value = '';
+    document.getElementById('winDesc').value = '';
+    document.getElementById('winImpact').value = '';
+    document.getElementById('winForm').classList.remove('open');
+    renderWins();
+  }
+
+  function deleteWin(i) {
+    wins.splice(wins.length - 1 - i, 1);
+    localStorage.setItem('hr90wins', JSON.stringify(wins));
+    renderWins();
+  }
+
+  renderWins();
+</script>
+</body>
+</html>
